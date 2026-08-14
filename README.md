@@ -6,7 +6,7 @@ avec **Next.js 16, TypeScript, Tailwind v4, Drizzle ORM et PostgreSQL**.
 Réservation en ligne → **API** → **base de données** → **espace admin protégé**
 pour confirmer ou annuler les demandes.
 
-> **🔗 Démo en ligne :** _à compléter_ — reporte ici ton URL Vercel.
+> **🔗 Démo en ligne :** https://restaurant-template-five-pi.vercel.app/
 
 ## 🖼️ Aperçu
 
