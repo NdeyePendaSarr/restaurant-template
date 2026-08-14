@@ -1,0 +1,44 @@
+import { NextResponse } from "next/server";
+import { desc } from "drizzle-orm";
+import { getDb } from "@/db";
+import { reservations } from "@/db/schema";
+import { reservationSchema } from "@/lib/validation";
+import { estAdmin } from "@/lib/auth";
+
+/** Public : enregistre une demande de réservation. */
+export async function POST(req: Request) {
+  let payload: unknown;
+  try {
+    payload = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Corps de requête invalide." }, { status: 400 });
+  }
+
+  const parsed = reservationSchema.safeParse(payload);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Champs invalides.", details: parsed.error.flatten().fieldErrors },
+      { status: 422 }
+    );
+  }
+
+  const { message, ...reste } = parsed.data;
+  const [creee] = await getDb()
+    .insert(reservations)
+    .values({ ...reste, message: message || null })
+    .returning({ id: reservations.id });
+
+  return NextResponse.json({ ok: true, id: creee.id }, { status: 201 });
+}
+
+/** Admin : liste les réservations, les plus récentes d'abord. */
+export async function GET() {
+  if (!(await estAdmin())) {
+    return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
+  }
+  const lignes = await getDb()
+    .select()
+    .from(reservations)
+    .orderBy(desc(reservations.creeLe));
+  return NextResponse.json({ reservations: lignes });
+}
