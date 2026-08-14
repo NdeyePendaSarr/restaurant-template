@@ -8,10 +8,24 @@ pour confirmer ou annuler les demandes.
 
 > **🔗 Démo en ligne :** _à compléter_ — reporte ici ton URL Vercel.
 
+## 🖼️ Aperçu
+
+| Accueil | Nos signatures |
+| :---: | :---: |
+| ![Page d'accueil](public/screenshots/accueil.png) | ![Section signatures](public/screenshots/services.png) |
+
+| Appel à réserver & pied de page | Notre histoire |
+| :---: | :---: |
+| ![CTA et footer](public/screenshots/footer.png) | ![Page à propos](public/screenshots/history.png) |
+
+La carte de localisation (Leaflet / OpenStreetMap, marqueur doré pulsé) :
+
+![Localisation](public/screenshots/localisation.png)
+
 ## ✨ Fonctionnalités
 
 - **Site public** : accueil éditorial, carte filtrable par catégorie, page à
-  propos avec carte OpenStreetMap, page réservation.
+  propos, page réservation, carte de localisation Leaflet.
 - **Réservation full-stack** : formulaire → `POST /api/reservations` avec
   **validation serveur (zod)** → enregistrement en base **PostgreSQL** (Drizzle).
 - **Espace admin** (`/admin`, protégé) : liste des réservations, filtres par
@@ -19,6 +33,9 @@ pour confirmer ou annuler les demandes.
 - **Authentification** : connexion par mot de passe → **cookie de session signé
   (JWT via jose)**, `middleware` qui protège `/admin`, comparaison du mot de
   passe à temps constant.
+- **Animations** : reveal au scroll en cascade, entrée du hero, cartes animées
+  au changement de filtre, micro-interactions — le tout désactivé si
+  `prefers-reduced-motion`.
 
 ## 🧱 Stack & architecture
 
@@ -30,11 +47,12 @@ pour confirmer ou annuler les demandes.
 | Base        | PostgreSQL via **Drizzle ORM** + driver serverless **Neon** |
 | Validation  | **zod** (partagée client + serveur)                         |
 | Auth        | **jose** (JWT signé en cookie httpOnly)                     |
+| Carte       | **Leaflet** + OpenStreetMap (sans clé API)                  |
 | Tests       | Vitest                                                      |
 
 ```
 app/            pages publiques, /admin, et /api (Route Handlers)
-components/      Header, Footer, MenuGrid, ReservationForm, AdminTable…
+components/      Header, Footer, MenuGrid, ReservationForm, AdminTable, RestaurantMap…
 content/         site.ts + menu.ts (contenu typé, séparé du code)
 db/              schema Drizzle + client (init paresseuse)
 lib/             validation (zod) + auth (jose)
@@ -102,11 +120,11 @@ npm run db:migrate   # applique les migrations
 
 ## 🌍 Déployer sur Vercel
 
-1. Pousse le dépôt sur GitHub, importe-le sur [vercel.com](https://vercel.com).
+1. Importe le dépôt sur [vercel.com](https://vercel.com).
 2. Ajoute les **variables d'environnement** (`DATABASE_URL`, `ADMIN_PASSWORD`,
    `AUTH_SECRET`) dans les réglages du projet.
 3. Applique les migrations sur ta base Neon (`npm run db:migrate` en local
-   pointant sur la même base, ou via l'interface Neon).
+   pointant sur la même base).
 4. Déploie, puis reporte l'URL en haut de ce README.
 
 ---
