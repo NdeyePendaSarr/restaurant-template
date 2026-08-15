@@ -1,26 +1,57 @@
-# 🍽️ Teranga Table — restaurant sénégalais (full-stack)
+# 🍽️ Teranga Table — restaurant sénégalais 
 
 Site vitrine **et** système de réservation complet pour un restaurant, construit
 avec **Next.js 16, TypeScript, Tailwind v4, Drizzle ORM et PostgreSQL**.
 
 Réservation en ligne → **API** → **base de données** → **espace admin protégé**
-pour confirmer ou annuler les demandes.
+pour confirmer ou annuler les demandes → **email automatique au client** à
+chaque étape (demande reçue, confirmée, annulée).
 
 > **🔗 Démo en ligne :** https://restaurant-template-five-pi.vercel.app/
 
 ## 🖼️ Aperçu
 
+### Site public
+
 | Accueil | Nos signatures |
 | :---: | :---: |
-| ![Page d'accueil](public/screenshots/accueil.png) | ![Section signatures](public/screenshots/services.png) |
+| ![Page d'accueil](public/screenshots/accueil.png) | ![Nos signatures](public/screenshots/repas.png) |
 
-| Appel à réserver & pied de page | Notre histoire |
+| Menu — Dîner | Menu — Jus & boissons |
 | :---: | :---: |
-| ![CTA et footer](public/screenshots/footer.png) | ![Page à propos](public/screenshots/history.png) |
+| ![Menu dîner](public/screenshots/diner.png) | ![Menu jus](public/screenshots/jus.png) |
 
-La carte de localisation (Leaflet / OpenStreetMap, marqueur doré pulsé) :
+| Notre histoire | Appel à réserver & pied de page |
+| :---: | :---: |
+| ![Page à propos](public/screenshots/hostory.png) | ![CTA et footer](public/screenshots/footer.png) |
 
-![Localisation](public/screenshots/localisation.png)
+### Réservation & localisation
+
+| Formulaire de réservation | Carte de localisation |
+| :---: | :---: |
+| ![Formulaire](public/screenshots/formulaire.png) | ![Localisation](public/screenshots/localisation.png) |
+
+La carte de localisation (Leaflet / OpenStreetMap, marqueur doré pulsé) pointe
+vers l'adresse configurée dans `content/site.ts`.
+
+### Espace admin
+
+| Connexion | Tableau des réservations |
+| :---: | :---: |
+| ![Connexion admin](public/screenshots/login.png) | ![Espace admin](public/screenshots/espace-admin.png) |
+
+### 📧 Notifications par email (Brevo)
+
+Le client reçoit un email automatique à chaque étape de sa réservation, avec
+un template aux couleurs du restaurant (date, heure, nombre de personnes).
+
+| Reçu dans la boîte de réception | Accusé de réception (à la soumission) |
+| :---: | :---: |
+| ![Email reçu](public/screenshots/email.png) | ![Demande reçue](public/screenshots/demande-reçue.png) |
+
+| Confirmation (par l'admin) | Annulation (par l'admin) |
+| :---: | :---: |
+| ![Confirmation](public/screenshots/confirmee.png) | ![Annulation](public/screenshots/annulee.png) |
 
 ## ✨ Fonctionnalités
 
@@ -30,6 +61,11 @@ La carte de localisation (Leaflet / OpenStreetMap, marqueur doré pulsé) :
   **validation serveur (zod)** → enregistrement en base **PostgreSQL** (Drizzle).
 - **Espace admin** (`/admin`, protégé) : liste des réservations, filtres par
   statut, confirmation / annulation en un clic (`PATCH /api/reservations/:id`).
+- **Notifications email transactionnelles (Brevo)** : le client reçoit
+  automatiquement un email à la soumission de sa demande (accusé de
+  réception), puis un second lorsque l'admin confirme ou annule. Envoi non
+  bloquant — un échec d'envoi ne fait jamais échouer l'action côté serveur ou
+  admin, il est simplement loggé.
 - **Authentification** : connexion par mot de passe → **cookie de session signé
   (JWT via jose)**, `middleware` qui protège `/admin`, comparaison du mot de
   passe à temps constant.
@@ -39,23 +75,24 @@ La carte de localisation (Leaflet / OpenStreetMap, marqueur doré pulsé) :
 
 ## 🧱 Stack & architecture
 
-| Couche      | Choix                                                        |
-| ----------- | ----------------------------------------------------------- |
-| Framework   | Next.js 16 (App Router, Route Handlers, middleware)         |
-| Langage     | TypeScript strict                                           |
-| Style       | Tailwind v4 + design system maison (`app/globals.css`)      |
-| Base        | PostgreSQL via **Drizzle ORM** + driver serverless **Neon** |
-| Validation  | **zod** (partagée client + serveur)                         |
-| Auth        | **jose** (JWT signé en cookie httpOnly)                     |
-| Carte       | **Leaflet** + OpenStreetMap (sans clé API)                  |
-| Tests       | Vitest                                                      |
+| Couche             | Choix                                                        |
+| ------------------ | ------------------------------------------------------------ |
+| Framework           | Next.js 16 (App Router, Route Handlers, middleware)          |
+| Langage             | TypeScript strict                                             |
+| Style               | Tailwind v4 + design system maison (`app/globals.css`)       |
+| Base                | PostgreSQL via **Drizzle ORM** + driver serverless **Neon**  |
+| Validation          | **zod** (partagée client + serveur)                          |
+| Auth                | **jose** (JWT signé en cookie httpOnly)                      |
+| Email transactionnel| **Brevo** (API REST, sans dépendance npm)                    |
+| Carte               | **Leaflet** + OpenStreetMap (sans clé API)                   |
+| Tests               | Vitest                                                        |
 
 ```
 app/            pages publiques, /admin, et /api (Route Handlers)
 components/      Header, Footer, MenuGrid, ReservationForm, AdminTable, RestaurantMap…
 content/         site.ts + menu.ts (contenu typé, séparé du code)
 db/              schema Drizzle + client (init paresseuse)
-lib/             validation (zod) + auth (jose)
+lib/             validation (zod) + auth (jose) + email (notifications Brevo)
 drizzle/         migrations SQL générées
 ```
 
@@ -83,13 +120,32 @@ ADMIN_PASSWORD="ton-mot-de-passe-admin"
 AUTH_SECRET="une-longue-chaine-aleatoire"   # openssl rand -base64 32
 ```
 
-### 3. Créer les tables
+### 3. Emails transactionnels (Brevo — gratuit, 300 emails/jour)
+
+1. Crée un compte sur [brevo.com](https://brevo.com).
+2. Vérifie une adresse expéditeur : menu du compte → **Paramètres** →
+   **Senders, Domains & IPs** → onglet **Senders** → ajoute et vérifie ton
+   adresse (un clic dans l'email de confirmation reçu).
+3. Crée une clé API : **Paramètres** → **SMTP & API** → onglet **Clés API &
+   MCP** → **Générer une nouvelle clé API**.
+4. Ajoute ces variables à ton `.env` :
+
+```dotenv
+BREVO_API_KEY="xkeysib-ta-cle"
+EMAIL_FROM="l-adresse-verifiee@exemple.com"
+EMAIL_FROM_NAME="Teranga Table"
+```
+
+> Sans ces variables, le site fonctionne normalement — l'envoi d'email est
+> simplement sauté (log d'avertissement en console).
+
+### 4. Créer les tables
 
 ```bash
 npm run db:migrate     # applique les migrations à ta base Neon
 ```
 
-### 4. Lancer
+### 5. Lancer
 
 ```bash
 npm run dev            # http://localhost:3000
@@ -122,11 +178,13 @@ npm run db:migrate   # applique les migrations
 
 1. Importe le dépôt sur [vercel.com](https://vercel.com).
 2. Ajoute les **variables d'environnement** (`DATABASE_URL`, `ADMIN_PASSWORD`,
-   `AUTH_SECRET`) dans les réglages du projet.
+   `AUTH_SECRET`, `BREVO_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_NAME`) dans les
+   réglages du projet, pour les 3 environnements (Production, Preview,
+   Development).
 3. Applique les migrations sur ta base Neon (`npm run db:migrate` en local
    pointant sur la même base).
 4. Déploie, puis reporte l'URL en haut de ce README.
 
 ---
 
-Conçu et développé par **Ndeye Penda Sarr**.
+Conçu et développé par **Ndeye Penda Sarr** - 2026.
