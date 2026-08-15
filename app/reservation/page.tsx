@@ -32,7 +32,7 @@ export default function ReservationPage() {
             </div>
           </div>
 
-          <div className="map-wrap reveal" style={{ transitionDelay: "0.25s", maxWidth: "640px", marginInline: "auto" }}>
+          <div className="map-wrap reveal" style={{ transitionDelay: "0.25s" }}>
             <RestaurantMap />
           </div>
         </div>

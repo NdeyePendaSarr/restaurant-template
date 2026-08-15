@@ -10,17 +10,16 @@ export const site = {
   nom: "Teranga Table",
   slogan: "La cuisine sénégalaise, revisitée",
   description:
-    "Restaurant sénégalais moderne à Dakar. Produits locaux, recettes traditionnelles, service attentionné.",
+    "Restaurant sénégalais moderne à Mbour. Produits locaux, recettes traditionnelles, service attentionné.",
 
-  telephone: "+221 33 000 00 00",
-  whatsapp: "221770000000", // sans le +
-  email: "contact@teranga-table.sn",
-  adresse: "Mermoz, Cité Keur Gorgui, Dakar",
-  adresseDetail: "Cité Keur Gorgui, Mermoz — Dakar, Sénégal",
+   telephone: "+221 77 266 13 85",
+   whatsapp: "221772661385", // sans le +
+   adresse: "Darou Salam, Mbour",
+   adresseDetail: "Darou Salam, Mbour — Thiès, Sénégal",
 
   // Localisation (carte OpenStreetMap)
-  lat: 14.71,
-  lng: -17.475,
+   lat: 14.42,
+  lng: -16.965,
 
   horaires: [
     { jour: "Lundi – Jeudi", heures: "12h – 15h · 19h – 23h" },

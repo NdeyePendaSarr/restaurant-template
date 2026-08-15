@@ -3,7 +3,7 @@ import { site, lienWhatsApp } from "@/content/site";
 import { signatures } from "@/content/menu";
 
 const avis = [
-  "« Le meilleur thiéb que j'ai mangé à Dakar depuis longtemps. Accueil chaleureux, assiettes généreuses. »",
+  "« Le meilleur thiéb que j'ai mangé à Mbour depuis longtemps. Accueil chaleureux, assiettes généreuses. »",
   "« Service impeccable et yassa parfait. On a réservé pour un anniversaire, tout était soigné. »",
 ];
 
@@ -13,7 +13,7 @@ export default function AccueilPage() {
       {/* Hero */}
       <section className="hero">
         <div className="hero-content">
-          <p className="eyebrow" style={{ color: "#fcd34d" }}>Restaurant · Dakar</p>
+          <p className="eyebrow" style={{ color: "#fcd34d" }}>Restaurant · Mbour</p>
           <h1>{site.slogan}</h1>
           <p>{site.description}</p>
           <div className="hero-actions">

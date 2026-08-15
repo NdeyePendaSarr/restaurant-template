@@ -4,7 +4,7 @@ import { site, lienWhatsApp } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "À propos",
-  description: `L'histoire, les horaires et l'adresse de ${site.nom} à Dakar.`,
+  description: `L'histoire, les horaires et l'adresse de ${site.nom} à Mbour.`,
 };
 
 export default function AProposPage() {
