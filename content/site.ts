@@ -11,7 +11,7 @@ export const site = {
   slogan: "La cuisine sénégalaise, revisitée",
   description:
     "Restaurant sénégalais moderne à Mbour. Produits locaux, recettes traditionnelles, service attentionné.",
-
+   email: "contact@teranga-table.sn",
    telephone: "+221 77 266 13 85",
    whatsapp: "221772661385", // sans le +
    adresse: "Darou Salam, Mbour",
