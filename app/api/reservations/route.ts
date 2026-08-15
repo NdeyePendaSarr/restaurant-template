@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { reservations } from "@/db/schema";
 import { reservationSchema } from "@/lib/validation";
 import { estAdmin } from "@/lib/auth";
+import { notifierDemandeRecue } from "@/lib/email";
 
 /** Public : enregistre une demande de réservation. */
 export async function POST(req: Request) {
@@ -23,10 +24,16 @@ export async function POST(req: Request) {
   }
 
   const { message, ...reste } = parsed.data;
+  // Renvoie la ligne complète : on a besoin de l'email et des détails pour
+  // l'accusé de réception.
   const [creee] = await getDb()
     .insert(reservations)
     .values({ ...reste, message: message || null })
-    .returning({ id: reservations.id });
+    .returning();
+
+  // Email au client confirmant la bonne réception de sa demande. Non
+  // bloquant : un échec d'envoi ne compromet pas l'enregistrement.
+  await notifierDemandeRecue(creee);
 
   return NextResponse.json({ ok: true, id: creee.id }, { status: 201 });
 }
