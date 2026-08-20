@@ -1,13 +1,10 @@
-# 🍽️ Teranga Table — restaurant sénégalais 
+# 🍽️ Teranga Table — Application de réservation full-stack
 
-Site vitrine **et** système de réservation complet pour un restaurant, construit
-avec **Next.js 16, TypeScript, Tailwind v4, Drizzle ORM et PostgreSQL**.
+> Application web full-stack pour la gestion de réservations d'un restaurant sénégalais, développée avec Next.js, TypeScript, PostgreSQL et une API sécurisée.
 
-Réservation en ligne → **API** → **base de données** → **espace admin protégé**
-pour confirmer ou annuler les demandes → **email automatique au client** à
-chaque étape (demande reçue, confirmée, annulée).
+**Frontend → API → validation serveur → PostgreSQL → espace admin → notifications email**
 
-> **🔗 Démo en ligne :** https://restaurant-template-five-pi.vercel.app/
+🔗 **Démo en ligne :** https://restaurant-template-five-pi.vercel.app/
 
 ## 🖼️ Aperçu
 
